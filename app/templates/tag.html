@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('Pages tagged %(tag)s', tag=tag) }}
+{% endblock title %}
+
+{% block content %}
+{% if pages %}
+    <div>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>{{ _('Title') }}</th>
+                    <th>{{ _('Create Time') }}</th>
+                    <th>{{ _('Last Edit Time') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                    <tr>
+                        <td><a href="{{ url_for('show', id=page.id) }}">{{ page.title }}</a></td>
+                        <td>{{ clear_time(page.pub_date) }}</td>
+                        <td>{{ clear_time(page.last_edit_date) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        <div class="pagination">
+      <ul>
+          <li>{% if page_num == 1 %}
+              <a href="">
+          {% else %}
+                <a href={{ url_for('tag', id=id, page_num=page_num-1) }}>
+              {% endif %}{{ _('Prev') }}</a></li>
+          {% for i in range(sum) %}
+              <li {% if i==page_num-1 %} class="active" {% endif %}><a href={{ url_for('tag', id=id, page_num=i+1) }}>{{ i+1 }}</a></li>
+          {% endfor %}
+          <li>{% if page_num == sum %}
+              <a href="">
+          {% else %}
+                <a href={{ url_for('tag', id=id, page_num=page_num+1) }}>
+              {% endif %}{{ _('Next') }}</a></li>
+      </ul>
+    </div>
+
+{% else %}
+	<p>{{ _('There are no pages tagged %(tag)s.') }}</p>
+{% endif %}
+{% endblock content %}

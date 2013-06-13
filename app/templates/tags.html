@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('Tag Index') }}
+{% endblock title %}
+
+{% block content %}
+{% if tags %}
+    <div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>{{ _('Tag') }}</th>
+				<th>{{ _('Number of Articles') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for tag in tags %}
+				<tr>
+					<td><a href="{{ url_for('tag', id=tag.id) }}">{{ tag.name }}</a></td>
+					<td>{{ tag.pages|length }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+    </div>
+        <div class="pagination">
+      <ul>
+          <li>{% if page_num == 1 %}
+               <a href="">
+          {% else %}
+               <a href={{ url_for('tags', page_num=page_num-1) }}>
+              {% endif %}{{ _('Prev') }}</a></li>
+          {% for i in range(sum) %}
+              <li {% if i==page_num-1 %} class="active" {% endif %}><a href={{ url_for('tags', page_num=i+1) }}>{{ i+1 }}</a></li>
+          {% endfor %}
+          <li>{% if page_num == sum %}
+              <a href="">
+          {% else %}
+                <a href={{ url_for('tags', page_num=page_num+1) }}>
+              {% endif %}{{ _('Next') }}</a></li>
+      </ul>
+    </div>
+{% else %}
+	<p>There are no tags in use so far.</p>
+{% endif %}
+{% endblock content %}
+
+{% block postscripts %}
+    $(document).ready(function(){
+    $('#nav-tags').attr('class', 'active');
+    });
+{% endblock %}

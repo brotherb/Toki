@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('About') }}
+{% endblock title %}
+
+{% block content %}
+    <h3>{{ _('This is an simplified wiki engine coded by brotherb') }}</h3>
+    <h4>{{ _('Contact: 1078039894@qq.com') }}</h4>
+{% endblock content %}
+
+{% block postscripts %}
+    $(document).ready(function(){
+    $('#nav-about').attr('class', 'active');
+    });
+{% endblock %}

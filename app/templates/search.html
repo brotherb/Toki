@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if search %}
+	{{ _('Results for %(keywords)s', keywords=search) }}
+{% else %}
+	{{ _('Search') }}
+{% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+	<div class="span6">
+		<form class="form-inline well" method="POST">
+			{{ form.hidden_tag() }}
+			{{ form.term(placeholder=_('Search for.. (regex accepted)'), class="span4") }}
+			<input type="submit" class="btn btn-success pull-right" value={{ _('Search!') }}>
+		</form>
+	</div>
+</div>
+
+{% if results %}
+    <ul>
+        {% for result in results %}
+            <li><a href="{{ url_for('show', id=result.id) }}">{{ result.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results for your search.</p>
+{% endif %}
+{% endblock content %}
+
+{% block postscripts %}
+    $(document).ready(function(){
+    $('#nav-search').attr('class', 'active');
+    });
+{% endblock %}

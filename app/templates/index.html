@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('Page Index') }}
+{% endblock title %}
+
+{% block additional_css %}
+ table { table-layout: fixed; }
+ table th, table td { overflow: hidden; }
+{% endblock additional_css %}
+
+{% block content %}
+{% if pages %}
+    <div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th style="width: ;: 60%;">{{ _('Title') }}</th>
+				<th style="width: 20%;">{{ _('Create Time') }}</th>
+                <th style="width: 20%;">{{ _('Last Edit Time') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for page in pages %}
+				<tr>
+					<td><a href="{{ url_for('show', id=page.id) }}">{{ page.title }}</a></td>
+                    <td>{{ clear_time(page.pub_date) }}</td>
+                    <td>{{ clear_time(page.last_edit_date) }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+    </div>
+    <div class="pagination">
+      <ul>
+          <li>{% if page_num == 1 %}
+              <a href="#">
+          {% else %}
+                <a href={{ url_for('index', page_num=page_num-1) }}>
+              {% endif %}{{ _('Prev') }}</a></li>
+          {% for i in range(sum) %}
+              <li {% if i==page_num-1 %} class="active" {% endif %}><a href={{ url_for('index', page_num=i+1) }}>{{ i+1 }}</a></li>
+          {% endfor %}
+          <li>{% if page_num == sum %}
+              <a href="">
+          {% else %}
+                <a href={{ url_for('index', page_num=page_num+1) }}>
+              {% endif %}{{ _('Next') }}</a></li>
+      </ul>
+    </div>
+{% else %}
+	<p>There are no pages yet.</p>
+{% endif %}
+{% endblock content %}
+
+{% block sidebar %}
+<ul class="nav nav-tabs nav-stacked">
+	<li><a href="{{ url_for('create') }}">{{ _('New Page') }}</a></li>
+	<li><a href="{{ url_for('tags') }}">{{ _('Tag Index') }}</a></li>
+</ul>
+{% endblock sidebar %}
+
+{% block postscripts %}
+    $(document).ready(function(){
+    $('#nav-index').attr('class', 'active');
+    });
+{% endblock %}

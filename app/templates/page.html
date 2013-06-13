@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}
+	{{ page.title }}
+{% endblock title %}
+
+{% block content %}
+  <div id="confirmDelete" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+      <h3>{{ _('Are you sure?') }}</h3>
+    </div>
+    <div class="modal-body">
+      <p>{{ _('Are you sure you want to delete this page? This cannot be undone.') }}  </p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">{{ _('No') }}</a>
+      <a href="{{ url_for('delete', id=page.id) }}" class="btn btn-danger">{{ _('Yes') }}</a>
+    </div>
+  </div>
+	{{ content }}
+{% endblock content %}
+
+{% block sidebar %}
+<ul class="nav nav-tabs nav-stacked">
+{#    <li><a href="{{ url_for('source', id=page.id) }}">View Source</a></li>#}
+    {% if not current_user.is_anonymous() %}
+        {% if not page.locked %}
+            <li><a href="{{ url_for('edit', id=page.id) }}">{{ _('Edit') }}</a></li>
+        {% endif %}
+
+        <li><a href="#" id="marklink">{% if not marked %}{{ _('Mark') }}{% else %}{{ _('Unmark') }}{% endif %}</a></li>
+    {% endif %}
+
+    <li><a href="{{ url_for('history', id=page.id) }}">{{ _('History') }}</a></li>
+
+    {% if page.locked %}
+        {% if current_user.role == 1 %}
+            <li><a href="#" id="unlocklink" class="text-warning">{{ _('Unlock') }}</a></li>
+        {% endif %}
+    {% else %}
+        {% if current_user.role == 1 %}
+            <li><a href="#" class="text-warning" id="locklink">{{ _('Lock this page') }}</a></li>
+            <li><a href="#confirmDelete" data-toggle="modal" class="text-error">{{ _('Delete') }}</a></li>
+        {% endif %}
+    {% endif %}
+</ul>
+    <p>{{ page.scorer_num }}{{ _('people scored this page.') }}</p>
+    <p>{{ _('Average score of this page: ') }}{{ format_float(page.score_avg) }}</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ _('Score') }}</th>
+                <th>{{ _('Percentage') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in percentages %}
+            <tr>
+                <td>{{ loop.revindex }}</td>
+                <td>{{ format_float(i) }}%</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% if not current_user.is_anonymous() %}
+    {% if myscore %}
+        {{ _('Your score of this page:') }}{{ myscore.score }}
+        {% endif %}
+    <br>
+<div class="btn-group">
+    <a href="" class="btn dropdown-toggle" data-toggle="dropdown">{% if not myscore %}{{ _('Score') }}{% else %}{{ _('Score again') }}{% endif %}</a>
+    <ul class="dropdown-menu" id="scorelist">
+        {% for i in range(5) %}
+            <li><a href="#" id="score{{ i+1 }}">{{ i+1 }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% endblock sidebar %}
+
+{% block postscripts %}
+    {% if not page.locked %}
+$('#locklink').on('click', function(){
+    $.post("/lock/{{ page.id }}", {}, function(){
+    location.reload();
+    });
+});
+    {% else %}
+
+$('#unlocklink').on('click', function(){
+    $.post("/unlock/{{ page.id }}", {}, function(){
+    location.reload();
+    });
+});
+    {% endif %}
+
+
+$('#marklink').on('click', function(){
+    if($(this).text() == "Mark"){
+    $.post("/mark/{{ page.id }}", {}, function(){
+        $('#marklink').text("Unmark")
+    });
+    }
+    else
+    {
+    $.post("/unmark/{{ page.id }}", {}, function(){
+        $('#marklink').text("Mark")
+    });
+    }
+
+    });
+{% for i in range(5) %}
+$('#score{{ i+1 }}').on('click', function(){
+        $.post("/score/{{ page.id }}/{{ i+1 }}", {}, function(){
+{#    alert('success')#}
+    location.reload();
+        });
+    });
+{% endfor %}
+{% endblock postscripts %}

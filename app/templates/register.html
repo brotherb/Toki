@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('Register') }}
+{% endblock title %}
+
+{% block content %}
+<div class="span5">
+  <form class="form-horizontal" method="post">
+    {{ form.hidden_tag() }}
+    {{ input(form.name, placeholder=_('Username'), class="input-block-level") }}
+    {{ input(form.password, placeholder=_('Password'), class="input-block-level") }}
+    {{ input(form.confirm_password, placeholder=_('Confirm Password'), class="input-block-level") }}
+    {{ input(form.email, placeholder=_('Email'), class="input-block-level") }}
+    <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn">{{ _('Register') }}</button>
+        </div>
+    </div>
+  </form>
+</div>
+{% endblock content %}

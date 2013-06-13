@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ _('Login') }}
+{% endblock title %}
+
+{% block content %}
+<div class="span5">
+  <form class="form-horizontal" method="post">
+    {{ form.hidden_tag() }}
+    {{ input(form.account, placeholder=_('Username/Email'),class="input-block-level") }}
+    {{ input(form.password, placeholder=_('Password'),class="input-block-level") }}
+    {{ input(form.remember_me)}}
+    <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn">{{ _('login') }}</button>
+        </div>
+    </div>
+  </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block additional_css %}
+ table { table-layout: fixed; }
+ table th, table td { overflow: hidden; }
+{% endblock additional_css %}
+
+{% block title -%}{{ _('History of %(title)s', title=page.title) }}{% endblock title %}
+
+{% block content %}
+    <div id="confirmCheckout" class="modal hide fade" aria-hidden="true">
+        <div class="modal-header">
+          <h3>{{ _('Are you sure?') }}</h3>
+        </div>
+        <div class="modal-body">
+          <p>{{ _('Are you sure you want to revert this version?  This will overwrite your current version!') }}</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">No</a>
+          <a href="" class="btn btn-danger" id="confirmBtn">Yes</a>
+        </div>
+    </div>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 8%">{{ _('ID') }}</th>
+                    <th style="width: 13%">{{ _('Edit Time') }}</th>
+                    <th style="width: 12%">{{ _('Edit by') }}</th>
+                    <th style="width: 37%">{{ _('Commit Message') }}</th>
+                    <th style="width: 10%"></th>
+                    <th style="width: 10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr class="log_header">
+                        <td>#{{ loop.revindex }}</td>
+                        <td>{{ clear_time(log.time) }}</td>
+                        <td>{{ log.operator.username }}</td>
+                        <td>{{ log.commitMSG }}</td>
+                        {% if loop.index == 1 %}
+                            <td><a class="btn btn-success" href="{{ url_for('show', id=page.id) }}">{{ _('view') }}</a></td>
+                        {% else %}
+                            <td><a class="btn btn-success" href="{{ url_for('history', id=page.id, commitSHA=log.commitSHA, version=loop.revindex) }}">{{ _('view') }}</a></td>
+                        {% endif %}
+                        {% if loop.index != 1 %}
+                            <td><a href="#confirmCheckout" data-toggle="modal" class="open_modal btn btn-primary" id="{{ loop.revindex }}" commitSHA="{{ log.commitSHA }}">{{ _('Revert') }}</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block postscripts %}
+    $(document).on("click", ".open_modal", function(){
+        var id = {{ page.id }};
+        var version = $(this).attr("id");
+        var commitSHA = $(this).attr("commitSHA");
+        var url = '../checkout/'+id+'?commitSHA='+commitSHA+'&version='+version
+        $(".modal-footer #confirmBtn").attr('href',url);
+    });
+{% endblock postscripts %}

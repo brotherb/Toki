@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    (#{{ version }}){{ page.title }}
+{% endblock title %}
+
+{% block content %}
+  <div id="confirmCheckout" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+      <h3>{{ _('Are you sure?') }}</h3>
+    </div>
+    <div class="modal-body">
+      <p>{{ _('Are you sure you want to revert this version?  This will overwrite your current version!') }}</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">{{ _('No') }}</a>
+      <a href="{{ url_for('checkout', id=page.id, commitSHA=commitSHA, version=version) }}" class="btn btn-danger">{{ _('Yes') }}</a>
+    </div>
+  </div>
+	{{ content }}
+{% endblock content %}
+
+{% block sidebar %}
+<ul class="nav nav-tabs nav-stacked">
+{#	<li><a href="{{ url_for('history', id=page.id) }}">checkout</a></li>#}
+    <li><a href="#confirmCheckout" data-toggle="modal" class="text-error">{{ _('Revert') }}</a></li>
+</ul>
+{% endblock sidebar %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ _('My Marks') }}
+{% endblock title %}
+
+{% block content %}
+{% if marks %}
+    <div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>{{ _('Title') }}</th>
+                <th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for mark in marks %}
+				<tr>
+					<td><a href="{{ url_for('show', id=mark.page_id) }}">{{ mark.page.title }}</a></td>
+                    {% if mark.notify %}
+                    <td><a href="{{ url_for('show', id=mark.page_id) }}">{{ _('View updates') }}</a></td>
+                    {% else %}
+                    <td>{{ _('No updates') }}</td>
+                    {% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+    </div>
+        <div class="pagination">
+      <ul>
+          {% if page_num == 1 %}
+              <li><a href="">{{ _('Prev') }}</a></li>
+          {% else %}
+                <li><a href={{ url_for('my_marks', id=id, page_num=page_num-1) }}>{{ _('Prev') }}</a></li>
+              {% endif %}
+          {% for i in range(sum) %}
+              <li {% if i==page_num-1 %} class="active" {% endif %}><a href={{ url_for('my_marks', id=id, page_num=i+1) }}>{{ i+1 }}</a></li>
+          {% endfor %}
+          {% if page_num == sum %}
+              <li><a href="">{{ _('Next') }}</a></li>
+          {% else %}
+                <li><a href={{ url_for('my_marks', id=id, page_num=page_num+1) }}>{{ _('Next') }}</a></li>
+              {% endif %}
+      </ul>
+    </div>
+{% else %}
+	<p>{{ _("You haven't mark any page!") }}</p>
+{% endif %}
+{% endblock content %}
+
+{% block sidebar %}
+    <ul class="nav nav-tabs nav-stacked">
+    {% if all %}
+        <li><a href="{{ url_for('my_marks', id=id, modified_only=True) }}">{{ _('Show updated pages only') }}</a></li>
+    {% else %}
+        <li><a href="{{ url_for('my_marks', id=id, modified_only=False) }}">{{ _('Show all') }}</a></li>
+    {% endif %}
+    </ul>
+{% endblock %}
