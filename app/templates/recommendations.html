@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ _('Recommendations') }}
+{% endblock title %}
+
+{% block content %}
+{% if recs %}
+    <div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>{{ _('Title') }}</th>
+                <th>{{ _('Score') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for rec in recs %}
+				<tr>
+					<td><a href="{{ url_for('show', id=rec[0].id) }}">{{ rec[0].title }}</a></td>
+                    <td>{{ rec[1] }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+    </div>
+{% else %}
+	<p>{{ _("No recommendations for now.") }}</p>
+{% endif %}
+{% endblock content %}

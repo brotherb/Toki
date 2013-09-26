@@ -9,6 +9,7 @@ from helpers import pm, um, convertMarkdown
 import mailing
 from math import ceil
 import hashlib
+from create_recommendations import getRecommendedItems
 
 
 items_per_page = 15
@@ -97,8 +98,9 @@ def home():
 def index():
     page_num = int(request.args.get('page_num', 1))
     sum = int(ceil(len(Page.query.all())*1.0/items_per_page))
-    if page_num < 1 or page_num > sum:
-        abort(404)
+    if not sum == 0:
+        if page_num < 1 or page_num > sum:
+            abort(404)
     pages = pm.get_page_index(page_num)
     return render_template('index.html', pages=pages, page_num=page_num, sum=sum)
 
@@ -180,8 +182,9 @@ def delete(id):
 def tags():
     page_num = int(request.args.get('page_num', 1))
     sum = int(ceil(len(Tag.query.all())*1.0/items_per_page))
-    if page_num < 1 or page_num > sum:
-        abort(404)
+    if not sum == 0:
+        if page_num < 1 or page_num > sum:
+            abort(404)
     tags = pm.get_tag_index(page_num)
     return render_template('tags.html', tags=tags, page_num=page_num, sum=sum)
 
@@ -191,8 +194,9 @@ def tag(id):
     tag = pm.get_tag(id)
     page_num = int(request.args.get('page_num', 1))
     sum = int(ceil(len(tag.pages)*1.0/items_per_page))
-    if page_num < 1 or page_num > sum:
-        abort(404)
+    if not sum == 0:
+        if page_num < 1 or page_num > sum:
+            abort(404)
     tagged = pm.index_by_tag(tag, page_num)
     return render_template('tag.html', pages=tagged, tag=tag.name, page_num=page_num, sum=sum, id=id)
 
@@ -284,8 +288,9 @@ def my_marks(id):
         marks = pm.get_marks(id)
     page_num = int(request.args.get('page_num', 1))
     sum = int(ceil(len(marks)*1.0/items_per_page))
-    if page_num < 1 or page_num > sum:
-        abort(404)
+    if not sum == 0:
+        if page_num < 1 or page_num > sum:
+            abort(404)
     start = items_per_page*(page_num-1)
     end = items_per_page*page_num
     if end > len(marks):
@@ -296,4 +301,6 @@ def my_marks(id):
 
 @app.route('/user/<int:id>/recommendations/')
 def recommendation(id):
-    pass
+    recs = getRecommendedItems(id)
+    recommendation = [(pm.get_page(rec[0]), rec[1]) for rec in recs]
+    return render_template('recommendations.html', recs=recommendation)

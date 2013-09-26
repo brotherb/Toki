@@ -1,4 +1,4 @@
-import os, sys
+import os
 
 extens = [".py", ".html"]
 lines_sum = 0
@@ -20,6 +20,6 @@ for root, dirs, filenames in os.walk('.'):
                     lines_html += 1
                     lines_sum += 1
 
-print 'sum: %d' % lines_sum
-print 'lines of html: %d' % lines_html
-print 'lines of py: %d' % lines_py
+print ('sum: %d' % lines_sum)
+print ('lines of html: %d' % lines_html)
+print ('lines of py: %d' % lines_py)
